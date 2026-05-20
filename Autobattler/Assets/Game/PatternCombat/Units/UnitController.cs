@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game.Core.BaseUnits;
 using Game.PatternCombat.TrunControllers;
+using UnityEngine;
 
 namespace Game.PatternCombat.Units
 {
@@ -12,7 +13,9 @@ namespace Game.PatternCombat.Units
             var aroundEnemy = CheckUnitRadius();
 
             if (aroundEnemy != null)
+            {
                 return aroundEnemy;
+            }
 
             var unit = ChoosePriorityType(enemyUnits);
 
@@ -25,28 +28,31 @@ namespace Game.PatternCombat.Units
             var currentPosition = GetUnitInfo().UnitPosition;
 
             var pathToUnit =
-                pathService.FindPath(currentPosition.X, currentPosition.Y, enemyPosition.X, enemyPosition.Y);
+                pathService.FindPath(currentPosition.x, currentPosition.y, enemyPosition.x, enemyPosition.y);
 
             ActionPoints = GetUnitInfo().UnitInfo.unitConfig.Stats.actionPoints;
             
             foreach (var path in pathToUnit)
             {
+                Debug.Log($"Current path == {GetUnitInfo().UnitPosition.worldPosition} and target path = {path.worldPosition}");
+                
+                if (GetUnitInfo().UnitPosition.worldPosition == path.worldPosition)
+                    continue;
+                
                 if (ActionPoints <= 0)
                     break;
                 
-                if (GridQuery.IsAdjacent8(path, GetUnitInfo().UnitPosition))
+                if (GridQuery.IsAdjacent8(enemyPosition, GetUnitInfo().UnitPosition))
                 {
                     ActionPoints = 0;
                     break;
                 }
                 
-                //TODO Unit Move
+                await UnitMove(path);
                 //TODO Unit decreasing action point
                 //TODO next iteration
                 //TODO Check around units and leave if having other units with low path (Только 1 раз)
             }
         }
-        
-        
     }
 }

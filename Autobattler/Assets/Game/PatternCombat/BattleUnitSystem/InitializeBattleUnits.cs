@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Data.UnitConfigs;
 using Game.PatternCombat.Grid.Services;
@@ -33,7 +34,14 @@ namespace Game.PatternCombat.BattleUnitSystem
             var unitStates = new UnitCombatInfo(unitInfo, parent);
             
             var unitObject = Instantiate(unitStates.UnitInfo.unitConfig.VisualData.unitModel);
-            unitObject.transform.position = unitStates.UnitPosition.WorldPosition;
+
+            if (unitObject is null)
+            {
+                Debug.LogError("Unit object is null");
+                throw new NullReferenceException(nameof(unitObject));
+            }
+            
+            unitObject.transform.position = grid.GridData[spawnPoint.x, spawnPoint.y].worldPosition;
             unitObject.name = $"{unitObject.name}:{parent}";
             
             var unitController = unitObject.GetComponent<UnitController>();

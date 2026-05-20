@@ -39,14 +39,12 @@
             "id": "21e6007d135805b4",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "План разработки.md",
-                "mode": "source",
-                "source": false
+                "file": "ТЗ/Pasted image 20260517132115.png"
               },
-              "icon": "lucide-file",
-              "title": "План разработки"
+              "icon": "lucide-image",
+              "title": "Pasted image 20260517132115"
             }
           }
         ],
@@ -210,11 +208,22 @@
       "bases:Create new base": false
     }
   },
-  "active": "21e6007d135805b4",
+  "active": "dcb73719b45681dc",
   "lastOpenFiles": [
-    "Wardfall concept.md",
+    "ТЗ.zip",
+    "ТЗ.zip.0e6i6q.part",
+    "ТЗ/UI.md",
+    "ТЗ/Pasted image 20260517133848.png",
+    "ТЗ/Pasted image 20260517133709.png",
+    "ТЗ/Pasted image 20260517133443.png",
+    "ТЗ/Pasted image 20260517133342.png",
+    "ТЗ/Pasted image 20260517132115.png",
+    "ТЗ/Pasted image 20260517131539.png",
+    "Системы/TurnControllers.md",
+    "ТЗ",
     "План разработки.md",
-    "Untitled",
+    "Системы",
+    "Wardfall concept.md",
     "Паттерн механика.md",
     "Welcome.md"
   ]

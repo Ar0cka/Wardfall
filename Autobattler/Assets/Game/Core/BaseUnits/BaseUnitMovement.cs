@@ -1,45 +1,53 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Game.Data.UnitConfigs;
+using Game.PatternCombat.Grid;
 using Grid;
 using UnityEngine;
 
 namespace Game.Core.BaseUnits
 {
-    public abstract class BaseUnitMovement : MonoBehaviour
+    public class BaseUnitMovement : MonoBehaviour
     {
         [SerializeField] protected Rigidbody2D rb2D;
         [SerializeField] protected SpriteRenderer spriteRenderer;
+        [SerializeField] protected Animator animator;
         [SerializeField] protected float stopDistance = 0.1f;
         
         protected bool IsMoving;
         protected Vector2 CurrentTarget;
 
-        protected UnitMovement MoveConfig;
+        protected UnitConfig UnitConfig;
 
         protected virtual void FixedUpdate()
         {
             if (!IsMoving || CurrentTarget == Vector2.zero)
                 return;
 
-            if (Vector2.Distance(rb2D.position, CurrentTarget) > stopDistance)
+            Debug.Log($"rb pos = {rb2D.position} and current target = {CurrentTarget} \n Vector2.Distance({Vector2.Distance(rb2D.position, CurrentTarget)})");
+            
+            if (Vector2.Distance(rb2D.position, CurrentTarget) <= stopDistance)
             {
                 Stop();
                 return;
             }
             
-            Vector2 direction = (CurrentTarget- rb2D.position).normalized;
+            Vector2 direction = (CurrentTarget - rb2D.position).normalized;
             
             SetSpriteSide(direction);
             
-            rb2D.linearVelocity = direction * MoveConfig.speed;
+            rb2D.linearVelocity = direction * UnitConfig.Movement.speed;
         }
 
-        public virtual async UniTask MoveAsync(GridData targetGridData, UnitMovement moveConfig)
+        public virtual async UniTask MoveAsync(GridData targetGridData, UnitConfig unitConfig)
         {
-            CurrentTarget = targetGridData.WorldPosition;
-            MoveConfig = moveConfig;
-
+            CurrentTarget = targetGridData.worldPosition;
+            UnitConfig = unitConfig;
+            
+            animator.SetBool(UnitConfig.Animation.walk, true);
+            
+            IsMoving = true;
+            
             await UniTask.WaitUntil(() => !IsMoving);
         }
 
@@ -53,6 +61,8 @@ namespace Game.Core.BaseUnits
             IsMoving = false;
             rb2D.linearVelocity = Vector2.zero;
             CurrentTarget = Vector2.zero;
+
+            animator.SetBool(UnitConfig.Animation.walk, false);  
         }
     }
 }

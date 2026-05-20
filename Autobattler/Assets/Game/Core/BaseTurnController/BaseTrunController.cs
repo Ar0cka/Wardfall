@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game.Core.BaseUnits;
 using Game.PatternCombat.BattleUnitSystem;
 using Game.PatternCombat.TrunControllers;
+using Game.PatternCombat.Units;
+using Game.PatternCombat.Units.UnitBehavior;
 using Zenject;
 
 namespace Game.Core.BaseTurnController
@@ -17,17 +20,20 @@ namespace Game.Core.BaseTurnController
 
         protected IUnitRegister UnitsRegister;
         protected IPathService PathService;
-        
 
-        public abstract void InitializeTurnController(IUnitRegister unitRegister, IPathService pathService);
+        protected Action<PlayerTurnType, IBehaviorController> StartPlayerTurn;
+        
+        public abstract void InitializeTurnController(IUnitRegister unitRegister, 
+            IPathService pathService, ref Action<PlayerTurnType> playerTurnType);
 
         public abstract UniTask Turn();
-        public async UniTask AwaitPlayerTurn()
+        public async UniTask AwaitPlayerTurn(BaseUnitController currentUnit)
         {
             IsPlayerTurn = true;
-            IsTurn = false;
             
-            await UniTask.WaitUntil(() => !IsPlayerTurn && IsTurn);
+            StartPlayerTurn?.Invoke(PlayerTurnType.UnitTurn, );
+            
+            await UniTask.WaitUntil(() => !IsPlayerTurn);
         }
         public virtual void CreateTurn()
         {
@@ -54,7 +60,6 @@ namespace Game.Core.BaseTurnController
         public void PlayerTurnIsEnd()
         {
             IsPlayerTurn = false;
-            IsTurn = true;
         }
 
         protected List<BaseUnitController> GetAllUnits()
@@ -69,7 +74,8 @@ namespace Game.Core.BaseTurnController
 
     public interface ITurnController
     {
-        public void InitializeTurnController(IUnitRegister unitRegister, IPathService pathService);
+        public void InitializeTurnController(IUnitRegister unitRegister, IPathService pathService, 
+            ref Action<PlayerTurnType> playerTurnType);
         public UniTask AwaitPlayerTurn();
         public UniTask Turn();
         

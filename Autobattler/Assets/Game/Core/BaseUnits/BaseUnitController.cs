@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Game.PatternCombat.BattleUnitSystem;
+using Game.PatternCombat.Grid;
 using Game.PatternCombat.Grid.Services;
 using Game.PatternCombat.TrunControllers;
+using Game.PatternCombat.Units;
+using Game.PatternCombat.Units.UnitBehavior;
 using Grid;
 using UnityEngine;
 using Zenject;
@@ -17,6 +20,7 @@ namespace Game.Core.BaseUnits
 
         [Header("Unit components")] 
         [SerializeField] protected BaseUnitMovement move;
+        [SerializeField] protected BehaviorControllerController behaviorControllerController;
         
         protected GridQuery GridQuery;
         
@@ -24,6 +28,9 @@ namespace Game.Core.BaseUnits
         protected UnitParent Parent;
 
         protected int ActionPoints = 0;
+        protected GUID UniqueID;
+
+        protected const float StopDistance = 0.2f;
 
         public virtual void InitializeUnit(UnitCombatInfo info, UnitParent parent, GridData gridData, GridQuery gridQuery)
         {
@@ -32,6 +39,7 @@ namespace Game.Core.BaseUnits
             GridQuery = gridQuery;
             
             IsValidComponents();
+            GenerateUnitID();
             
             UnitInfo.SetPosition(gridData);
         }
@@ -41,9 +49,13 @@ namespace Game.Core.BaseUnits
 
         protected virtual async UniTask UnitMove(GridData targetData)
         {
-            await move.MoveAsync(targetData, GetUnitInfo().UnitInfo.unitConfig.Movement);
+            await move.MoveAsync(targetData, GetUnitInfo().UnitInfo.unitConfig);
 
             ActionPoints--;
+
+            if (Vector2.Distance(transform.position, targetData.worldPosition) > StopDistance)
+                throw new ArgumentException("Current position != targetData");
+            
             UnitInfo.SetPosition(targetData);
         }
 
@@ -63,26 +75,14 @@ namespace Game.Core.BaseUnits
             {
                 var unitController = unitCollider.GetComponent<BaseUnitController>();
                 
+                if (unitController.GetUniqueID() == UniqueID)
+                    continue;
+                
                 Sort(unitController, ref unitsPosition);
             }
 
             var unit = ChoosePriorityType(unitsPosition);
 
-            return unit;
-        }
-        
-        protected virtual BaseUnitController ChoosePriorityType(List<BaseUnitController> units)
-        {
-            var unitPriorityConfig = UnitInfo.UnitInfo.unitConfig.PrioritySettings;
-
-            var filteredUnits = units.Where(e =>
-                unitPriorityConfig.priorityType.Contains(e.UnitInfo.UnitInfo.unitConfig.UnitDefinition.unitType));
-
-            var unit = filteredUnits.FirstOrDefault();
-
-            if (unit is null)
-                return units.First();
-            
             return unit;
         }
         protected virtual void Sort(BaseUnitController unitController, ref List<BaseUnitController> unitsPosition)
@@ -127,8 +127,15 @@ namespace Game.Core.BaseUnits
             if (rb2D is null)
                 throw new NullReferenceException(nameof(rb2D));
         }
+        
+        protected void GenerateUnitID()
+        {
+            UniqueID = GUID.Generate();
+        }
 
         public UnitCombatInfo GetUnitInfo() => UnitInfo;
+        public GUID GetUniqueID() => UniqueID;
+        public IBehaviorController GetUnitBehavior() => behaviorControllerController;
 
         public UnitParent GetEnemyType()
         {

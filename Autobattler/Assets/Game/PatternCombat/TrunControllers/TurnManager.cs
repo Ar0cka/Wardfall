@@ -20,24 +20,33 @@ namespace Game.PatternCombat.TrunControllers
         private TurnControllerType _currentControllerType;
         private ITurnController _currentController;
 
-        public void InitializeTurnManager(ref Action<TurnControllerType> onChangeType, ref Action endTurn)
+        public void InitializeTurnManager(ref Action<TurnControllerType> onChangeType, ref Action<PlayerTurnType> endTurn, 
+            ref Action<PlayerTurnType> startPlayerTurn)
         {
             onChangeType += ChangedControllerType;
             _currentControllerType = TurnControllerType.Manual;
 
             _turnControllers[TurnControllerType.Manual] = 
-                _turnFactory.CreateTurnController<ManualTurnController>(_unitRegister, _pathService);
+                _turnFactory.CreateTurnController<ManualTurnController>(_unitRegister, _pathService, 
+                    ref startPlayerTurn);
             
             _currentController = _turnControllers[_currentControllerType];
 
-            endTurn += () =>
+            endTurn += (t) =>
             {
                 _currentController.PlayerTurnIsEnd();
                 
-                _currentController.AwaitPlayerTurn().Forget(e =>
+                Debug.Log("End player turn");
+
+                if (t == PlayerTurnType.UnitTurn)
+                    return;
+                
+                _currentController.Turn().Forget(e =>
                 {
                     Debug.Log(e.Message);
                 });
+                
+                Debug.Log("Start units turn");
             };
         }
         
@@ -57,5 +66,11 @@ namespace Game.PatternCombat.TrunControllers
         Manual,
         ArmyTemplates,
         Automatic
+    }
+
+    public enum PlayerTurnType
+    {
+        StartTurn,
+        UnitTurn
     }
 }

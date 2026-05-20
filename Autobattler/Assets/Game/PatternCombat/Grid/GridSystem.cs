@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Game.PatternCombat.Grid;
 using Game.PatternCombat.Grid.Interfaces;
 using UnityEngine;
 
@@ -58,9 +59,9 @@ namespace Grid
             
                     _gridData[x, y] = new GridData
                     {
-                        WorldX = worldX, WorldY = worldY,
-                        WorldPosition = new Vector2(worldX, worldY),
-                        X = x, Y = y
+                        worldX = worldX, worldY = worldY,
+                        worldPosition = new Vector2(worldX, worldY),
+                        x = x, y = y
                     };
                 }
             }
@@ -70,7 +71,7 @@ namespace Grid
         {
             var gridData = _gridData[row, colum];
             
-            return new Vector2(gridData.WorldX, gridData.WorldY);
+            return new Vector2(gridData.worldX, gridData.worldY);
         }
         
         public List<(int x, int y)> GetNeighborCoords(int x, int y)
@@ -135,7 +136,7 @@ namespace Grid
 
         public void SetWalkable(int x, int y, bool value)
         {
-            _gridData[x, y].IsWalkable = value;
+            _gridData[x, y].isWalkable = value;
         }
         
         public GridData GetFreeCells(int x, int y, float overlapRadius)
@@ -148,9 +149,9 @@ namespace Grid
                 var currentCell = _gridData[n.x, n.y];
 
 #if UNITY_EDITOR
-                targetPos = new Vector2(currentCell.WorldX, currentCell.WorldY);
+                targetPos = new Vector2(currentCell.worldX, currentCell.worldY);
 #endif
-                var hit = Physics2D.OverlapCircleAll(new Vector2(currentCell.WorldX, currentCell.WorldY),
+                var hit = Physics2D.OverlapCircleAll(new Vector2(currentCell.worldX, currentCell.worldY),
                     overlapRadius);
                 
                 if (!hit.Any(h => h.CompareTag("Unit")))
@@ -173,7 +174,7 @@ namespace Grid
             {
                 foreach (var cell in _gridData)
                 {
-                    Gizmos.DrawSphere(new Vector3(cell.WorldX, cell.WorldY), 0.1f);
+                    Gizmos.DrawSphere(new Vector3(cell.worldX, cell.worldY), 0.1f);
                 }
             }
             

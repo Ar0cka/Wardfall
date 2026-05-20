@@ -1,12 +1,14 @@
+using System;
 using UnityEngine;
 
-namespace Grid
+namespace Game.PatternCombat.Grid
 {
+    [Serializable]
     public class GridData
     {
-        public int X, Y;
-        public float WorldX, WorldY;
-        public Vector2 WorldPosition;
-        public bool IsWalkable = true;
+        public int x, y;
+        public float worldX, worldY;
+        public Vector2 worldPosition;
+        public bool isWalkable = true;
     }
 }

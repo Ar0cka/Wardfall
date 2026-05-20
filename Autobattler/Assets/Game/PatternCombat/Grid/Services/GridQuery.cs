@@ -7,23 +7,23 @@ namespace Game.PatternCombat.Grid.Services
     {
         public bool IsAdjacent4(GridData target, GridData current)
         {
-            int dx = Mathf.Abs(target.X - current.X);
-            int dy = Mathf.Abs(target.X - current.X);
+            int dx = Mathf.Abs(target.x - current.x);
+            int dy = Mathf.Abs(target.x - current.x);
 
             return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
         }
 
         public bool IsAdjacent8(GridData target, GridData current)
         {
-            int dx = Mathf.Abs(target.X - current.X);
-            int dy = Mathf.Abs(target.Y - current.Y);
+            int dx = Mathf.Abs(target.x - current.x);
+            int dy = Mathf.Abs(target.y - current.y);
 
             return dx <= 1 && dy <= 1 && !(dx == 0 && dy == 0);
         }
 
         public int Manhattan(GridData target, GridData current)
         {
-            return Mathf.Abs(target.X - current.X) + Mathf.Abs(target.Y - current.Y);
+            return Mathf.Abs(target.x - current.x) + Mathf.Abs(target.y - current.y);
         }
     }
 }
