@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.PatternCombat.TrunControllers;
+using Game.PatternCombat.Units.UnitBehavior;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,7 @@ namespace Game.PatternCombat.Player
         [SerializeField] private Button chooseTurn;
         [SerializeField] private Button endTurnButton;
         
-        public Action<PlayerTurnType> StartPlayerTurn;
+        public Action<PlayerTurnType, IBehaviorController> StartPlayerTurn;
         public Action<PlayerTurnType> EndPlayerTurn;
         
         private PlayerTurnType _currentTurnType;
@@ -24,10 +25,12 @@ namespace Game.PatternCombat.Player
             endTurnButton.onClick.AddListener(EndTurn);
         }
 
-        private void StartTurn(PlayerTurnType turnType)
+        private void StartTurn(PlayerTurnType turnType, IBehaviorController behaviorController)
         {
             _currentTurnType = turnType;
             StartTurnActiveItems(true);
+            
+            //TODO Send behavior controller to pattern choose system
         }
         
         private void EndTurn()

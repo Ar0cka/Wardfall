@@ -8,25 +8,13 @@ namespace Game.PatternCombat.Units
 {
     public class UnitController : BaseUnitController
     {
-        public override BaseUnitController ChooseTarget(List<BaseUnitController> enemyUnits)
+        public override async UniTask Action(IPathService pathService, List<BaseUnitController> enemyUnits)
         {
-            var aroundEnemy = CheckUnitRadius();
-
-            if (aroundEnemy != null)
-            {
-                return aroundEnemy;
-            }
-
-            var unit = ChoosePriorityType(enemyUnits);
-
-            return unit;
-        }
-
-        public override async UniTask Action(IPathService pathService, BaseUnitController targetUnit)
-        {
-            var enemyPosition = targetUnit.GetUnitInfo().UnitPosition;
+            var enemyUnit = behaviorControllerController.ChooseTarget(enemyUnits);
+            
+            var enemyPosition = enemyUnit.GetUnitInfo().UnitPosition;
             var currentPosition = GetUnitInfo().UnitPosition;
-
+            
             var pathToUnit =
                 pathService.FindPath(currentPosition.x, currentPosition.y, enemyPosition.x, enemyPosition.y);
 

@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Game.Core.BaseTurnController;
 using Game.PatternCombat.BattleUnitSystem;
 using Game.PatternCombat.TrunControllers.TurnVariants;
+using Game.PatternCombat.Units.UnitBehavior;
 using UnityEngine;
 using Zenject;
 
@@ -21,7 +22,7 @@ namespace Game.PatternCombat.TrunControllers
         private ITurnController _currentController;
 
         public void InitializeTurnManager(ref Action<TurnControllerType> onChangeType, ref Action<PlayerTurnType> endTurn, 
-            ref Action<PlayerTurnType> startPlayerTurn)
+            ref Action<PlayerTurnType, IBehaviorController> startPlayerTurn)
         {
             onChangeType += ChangedControllerType;
             _currentControllerType = TurnControllerType.Manual;

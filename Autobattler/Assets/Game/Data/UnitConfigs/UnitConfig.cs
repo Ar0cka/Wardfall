@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using Game.Data.Patterns;
+using Game.Data.UnitConfigs.UnitInfoClasses;
 using UnityEngine;
 
 namespace Game.Data.UnitConfigs
@@ -15,10 +14,7 @@ namespace Game.Data.UnitConfigs
         [field: SerializeField] public UnitAnimation Animation { get; private set; }
         [field: SerializeField] public UnitVisualData VisualData { get; private set; }
         
-        [field: SerializeField] public List<UnitPattern> UnitPatterns { get; private set; }
         [field: SerializeField] public UnitChecker UnitChecker { get; private set; }
-        
-        [field: SerializeField] public UnitPrioritySettings PrioritySettings { get; private set; }
         
     }
     
@@ -35,54 +31,5 @@ namespace Game.Data.UnitConfigs
     {
         public Sprite unitSprite;
         public GameObject unitModel;
-    }
-    
-    [Serializable]
-    public class UnitMovement
-    {
-        public float speed;
-        public float acceleration;
-    }
-    
-    [Serializable]
-    public class UnitStats
-    {
-        public int health;
-        public int attack;
-        public int defense;
-        public int actionPoints;
-        public int initiative;
-    }
-
-    [Serializable]
-    public class UnitAnimation
-    {
-        public string walk;
-        public string death;
-        public string attack;
-        public string hit;
-    }
-
-    [Serializable]
-    public class UnitChecker
-    {
-        public float aroundUnit;
-        public float cellRadius;
-
-        public LayerMask targetLayer;
-    }
-
-    [Serializable]
-    public class UnitPrioritySettings
-    {
-        public List<UnitType> priorityType;
-    }
-
-    public enum UnitType
-    {
-        Range,
-        Mile,
-        Tank,
-        Mage
     }
 }

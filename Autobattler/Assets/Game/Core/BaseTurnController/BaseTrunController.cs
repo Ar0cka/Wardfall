@@ -24,14 +24,14 @@ namespace Game.Core.BaseTurnController
         protected Action<PlayerTurnType, IBehaviorController> StartPlayerTurn;
         
         public abstract void InitializeTurnController(IUnitRegister unitRegister, 
-            IPathService pathService, ref Action<PlayerTurnType> playerTurnType);
+            IPathService pathService, ref Action<PlayerTurnType, IBehaviorController> playerTurnType);
 
         public abstract UniTask Turn();
         public async UniTask AwaitPlayerTurn(BaseUnitController currentUnit)
         {
             IsPlayerTurn = true;
             
-            StartPlayerTurn?.Invoke(PlayerTurnType.UnitTurn, );
+            StartPlayerTurn?.Invoke(PlayerTurnType.UnitTurn, currentUnit.GetUnitBehavior());
             
             await UniTask.WaitUntil(() => !IsPlayerTurn);
         }
@@ -75,8 +75,8 @@ namespace Game.Core.BaseTurnController
     public interface ITurnController
     {
         public void InitializeTurnController(IUnitRegister unitRegister, IPathService pathService, 
-            ref Action<PlayerTurnType> playerTurnType);
-        public UniTask AwaitPlayerTurn();
+            ref Action<PlayerTurnType, IBehaviorController> playerTurnType);
+        public UniTask AwaitPlayerTurn(BaseUnitController unit);
         public UniTask Turn();
         
         public void PlayerTurnIsEnd();

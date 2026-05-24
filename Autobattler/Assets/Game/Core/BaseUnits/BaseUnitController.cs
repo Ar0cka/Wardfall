@@ -8,6 +8,7 @@ using Game.PatternCombat.Grid.Services;
 using Game.PatternCombat.TrunControllers;
 using Game.PatternCombat.Units;
 using Game.PatternCombat.Units.UnitBehavior;
+using Game.PatternCombat.Units.UnitInfoManager;
 using Grid;
 using UnityEngine;
 using Zenject;
@@ -25,6 +26,7 @@ namespace Game.Core.BaseUnits
         protected GridQuery GridQuery;
         
         protected UnitCombatInfo UnitInfo;
+        protected UnitInfoProvider UnitInfoProvider;
         protected UnitParent Parent;
 
         protected int ActionPoints = 0;
@@ -43,9 +45,8 @@ namespace Game.Core.BaseUnits
             
             UnitInfo.SetPosition(gridData);
         }
-
-        public abstract BaseUnitController ChooseTarget(List<BaseUnitController> enemyUnits);
-        public abstract UniTask Action(IPathService pathService, BaseUnitController targetUnit);
+        
+        public abstract UniTask Action(IPathService pathService, List<BaseUnitController> enemyUnits);
 
         protected virtual async UniTask UnitMove(GridData targetData)
         {
@@ -57,69 +58,6 @@ namespace Game.Core.BaseUnits
                 throw new ArgumentException("Current position != targetData");
             
             UnitInfo.SetPosition(targetData);
-        }
-
-        protected virtual BaseUnitController CheckUnitRadius()
-        {
-            var unitConfig = UnitInfo.UnitInfo.unitConfig;
-            
-            var aroundList =
-                Physics2D.OverlapCircleAll(rb2D.position, unitConfig.UnitChecker.aroundUnit, unitConfig.UnitChecker.targetLayer).ToList();
-
-            if (aroundList.Count <= 0)
-                return null;
-
-            List<BaseUnitController> unitsPosition = new();
-
-            foreach (var unitCollider in aroundList)
-            {
-                var unitController = unitCollider.GetComponent<BaseUnitController>();
-                
-                if (unitController.GetUniqueID() == UniqueID)
-                    continue;
-                
-                Sort(unitController, ref unitsPosition);
-            }
-
-            var unit = ChoosePriorityType(unitsPosition);
-
-            return unit;
-        }
-        protected virtual void Sort(BaseUnitController unitController, ref List<BaseUnitController> unitsPosition)
-        {
-            if (unitsPosition.Count <= 0)
-            {
-                unitsPosition.Add(unitController);
-                return;
-            }
-
-            int i = 0;
-            
-            var unitDistance = Vector2.Distance(unitController.transform.position, rb2D.position);
-            
-            while (i < unitsPosition.Count)
-            {
-                var currentDistance = Vector2.Distance(rb2D.position, unitsPosition[i].transform.position);
-                
-                if (currentDistance > unitDistance)
-                {
-                    unitsPosition.Add(null);
-
-                    var saved = unitsPosition[i];
-                    unitsPosition[i] = unitController;
-                    
-                    for (int j = i; j < unitsPosition.Count; j++)
-                    {
-                        (unitsPosition[j + 1], saved) = (saved, unitsPosition[j + 1]);
-                    }
-
-                    return;
-                }
-
-                i++;
-            }
-            
-            unitsPosition.Add(unitController);
         }
         
         protected void IsValidComponents()
@@ -136,12 +74,11 @@ namespace Game.Core.BaseUnits
         public UnitCombatInfo GetUnitInfo() => UnitInfo;
         public GUID GetUniqueID() => UniqueID;
         public IBehaviorController GetUnitBehavior() => behaviorControllerController;
-
+        public IUnitInfoProvider GetUnitInfoProvider() => UnitInfoProvider;
         public UnitParent GetEnemyType()
         {
             return Parent == UnitParent.Player ? UnitParent.Enemy : UnitParent.Player;
         }
-
         public UnitParent GetParentType() => Parent;
     }
 }

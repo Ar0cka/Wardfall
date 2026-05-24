@@ -2,7 +2,9 @@ using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Game.Core.BaseTurnController;
+using Game.Core.BaseUnits;
 using Game.PatternCombat.BattleUnitSystem;
+using Game.PatternCombat.Units.UnitBehavior;
 using UnityEngine;
 
 namespace Game.PatternCombat.TrunControllers.TurnVariants
@@ -12,7 +14,7 @@ namespace Game.PatternCombat.TrunControllers.TurnVariants
         private Action _onUnitTurn;
         
         public override void InitializeTurnController(IUnitRegister unitRegister, IPathService pathService,
-            ref Action<PlayerTurnType> playerTurnType)
+            ref Action<PlayerTurnType, IBehaviorController> playerTurnType)
         {
             IsPlayerTurn = true;
 
@@ -35,23 +37,16 @@ namespace Game.PatternCombat.TrunControllers.TurnVariants
                 var unitController = UnitsQueue.Dequeue();
 
                 if (unitController.GetParentType() == UnitParent.Player)
-                    await AwaitPlayerTurn();
+                    await AwaitPlayerTurn(unitController);
 
                 var enemyType = unitController.GetParentType() == UnitParent.Player
                     ? UnitParent.Enemy
                     : UnitParent.Player;
                 
-                var targetUnit = unitController.ChooseTarget(UnitsRegister.GetUnits(enemyType).Values.ToList());
-
-                if (targetUnit is null)
-                {
-                    Debug.LogError("Target unit is not founded");
-                }
-                
-                await unitController.Action(PathService, targetUnit);
+                await unitController.Action(PathService, UnitsRegister.GetUnits(enemyType).Values.ToList());
             }
             
-            StartPlayerTurn.Invoke(PlayerTurnType.StartTurn);
+            StartPlayerTurn.Invoke(PlayerTurnType.StartTurn, null);
         }
     }
 }

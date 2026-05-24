@@ -6,20 +6,20 @@ namespace Game.Data.Player
     [CreateAssetMenu(fileName = "pattern settings", menuName = "Patterns/PlayerPatternSettings")]
     public class PatternLimits : ScriptableObject
     {
-        [field:SerializeField] public PlayerPatternSettings PlayerPatternSettings { get; private set; }
+        [field:SerializeField] public PatternLimitsInfo PatternLimitsInfo { get; private set; }
 
-        public PlayerPatternSettings Clone()
+        public PatternLimitsInfo Clone()
         {
-            return new PlayerPatternSettings
+            return new PatternLimitsInfo
             {
-                maxGeneralPatterns = PlayerPatternSettings.maxGeneralPatterns,
-                maxSamplePatterns = PlayerPatternSettings.maxSamplePatterns
+                maxGeneralPatterns = PatternLimitsInfo.maxGeneralPatterns,
+                maxSamplePatterns = PatternLimitsInfo.maxSamplePatterns
             };
         }
     }
 
     [Serializable]
-    public class PlayerPatternSettings
+    public class PatternLimitsInfo
     {
         public int maxSamplePatterns;
         public int maxGeneralPatterns;
