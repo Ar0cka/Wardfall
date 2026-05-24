@@ -28,7 +28,7 @@ namespace Game.PatternCombat.CombatEndSystem
                 return;
 
             FightResult result = playerUnits.Count > 0 ? FightResult.Win : FightResult.Lose;
-            List<UnitWorldInfo> unitList = playerUnits.Values.Select(e => e.GetUnitInfo().UnitInfo).ToList();
+            List<UnitWorldInfo> unitList = playerUnits.Values.Select(e => e.GetUnitInfo().UnitWorldConfig).ToList();
 
             var outputData = new SendToOutputData
             {

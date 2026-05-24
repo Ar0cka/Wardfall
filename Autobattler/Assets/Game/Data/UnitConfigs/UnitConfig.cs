@@ -32,4 +32,13 @@ namespace Game.Data.UnitConfigs
         public Sprite unitSprite;
         public GameObject unitModel;
     }
+
+    [Serializable]
+    public class UnitHitPointsInfo
+    {
+        public int maxHealth;
+        [Range(0, 1)] public float maxProc;
+        [Range(0, 1)] public float mediumProc;
+        [Range(0, 1)] public float lowProc;
+    }
 }

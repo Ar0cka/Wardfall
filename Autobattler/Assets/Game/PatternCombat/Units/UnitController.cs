@@ -10,7 +10,7 @@ namespace Game.PatternCombat.Units
     {
         public override async UniTask Action(IPathService pathService, List<BaseUnitController> enemyUnits)
         {
-            var enemyUnit = behaviorControllerController.ChooseTarget(enemyUnits);
+            var enemyUnit = behaviorControllerController.ChooseTarget(enemyUnits, UnitInfoProvider);
             
             var enemyPosition = enemyUnit.GetUnitInfo().UnitPosition;
             var currentPosition = GetUnitInfo().UnitPosition;
@@ -18,7 +18,7 @@ namespace Game.PatternCombat.Units
             var pathToUnit =
                 pathService.FindPath(currentPosition.x, currentPosition.y, enemyPosition.x, enemyPosition.y);
 
-            ActionPoints = GetUnitInfo().UnitInfo.unitConfig.Stats.actionPoints;
+            ActionPoints = GetUnitInfo().UnitWorldConfig.unitConfig.Stats.actionPoints;
             
             foreach (var path in pathToUnit)
             {

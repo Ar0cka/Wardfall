@@ -8,15 +8,15 @@ namespace Game.PatternCombat.BattleUnitSystem
     [Serializable]
     public class UnitCombatInfo
     {
-        public UnitWorldInfo UnitInfo { get; private set; }
+        public UnitWorldInfo UnitWorldConfig { get; private set; }
         public UnitParent UnitParent { get; private set; }
         public int Count { get; private set; }
         public GridData UnitPosition { get; private set; }
         
-        public UnitCombatInfo(UnitWorldInfo worldInfo, UnitParent parent)
+        public UnitCombatInfo(UnitWorldInfo worldWorldConfig, UnitParent parent)
         {
-            UnitInfo = worldInfo;
-            Count = worldInfo.unitCount;
+            UnitWorldConfig = worldWorldConfig;
+            Count = worldWorldConfig.unitCount;
 
             UnitParent = parent;
         }

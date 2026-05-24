@@ -8,6 +8,7 @@ using Game.PatternCombat.Grid.Services;
 using Game.PatternCombat.TrunControllers;
 using Game.PatternCombat.Units;
 using Game.PatternCombat.Units.UnitBehavior;
+using Game.PatternCombat.Units.UnitHealthSystem;
 using Game.PatternCombat.Units.UnitInfoManager;
 using Grid;
 using UnityEngine;
@@ -25,8 +26,9 @@ namespace Game.Core.BaseUnits
         
         protected GridQuery GridQuery;
         
-        protected UnitCombatInfo UnitInfo;
+        protected UnitCombatInfo UnitCombatConfig;
         protected UnitInfoProvider UnitInfoProvider;
+        protected IUnitHealth Health;
         protected UnitParent Parent;
 
         protected int ActionPoints = 0;
@@ -36,28 +38,29 @@ namespace Game.Core.BaseUnits
 
         public virtual void InitializeUnit(UnitCombatInfo info, UnitParent parent, GridData gridData, GridQuery gridQuery)
         {
-            UnitInfo = info;
+            UnitCombatConfig = info;
             Parent = parent;
             GridQuery = gridQuery;
             
             IsValidComponents();
             GenerateUnitID();
             
-            UnitInfo.SetPosition(gridData);
+            UnitCombatConfig.SetPosition(gridData);
+            UnitInfoProvider.Initialize(new UnitInfoProviderInitData(UnitCombatConfig.UnitWorldConfig.unitConfig, gameObject, Health));
         }
         
         public abstract UniTask Action(IPathService pathService, List<BaseUnitController> enemyUnits);
 
         protected virtual async UniTask UnitMove(GridData targetData)
         {
-            await move.MoveAsync(targetData, GetUnitInfo().UnitInfo.unitConfig);
+            await move.MoveAsync(targetData, GetUnitInfo().UnitWorldConfig.unitConfig);
 
             ActionPoints--;
 
             if (Vector2.Distance(transform.position, targetData.worldPosition) > StopDistance)
                 throw new ArgumentException("Current position != targetData");
             
-            UnitInfo.SetPosition(targetData);
+            UnitCombatConfig.SetPosition(targetData);
         }
         
         protected void IsValidComponents()
@@ -71,7 +74,7 @@ namespace Game.Core.BaseUnits
             UniqueID = GUID.Generate();
         }
 
-        public UnitCombatInfo GetUnitInfo() => UnitInfo;
+        public UnitCombatInfo GetUnitInfo() => UnitCombatConfig;
         public GUID GetUniqueID() => UniqueID;
         public IBehaviorController GetUnitBehavior() => behaviorControllerController;
         public IUnitInfoProvider GetUnitInfoProvider() => UnitInfoProvider;

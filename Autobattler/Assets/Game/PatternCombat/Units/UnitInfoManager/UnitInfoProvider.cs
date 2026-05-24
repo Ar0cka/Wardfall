@@ -13,7 +13,7 @@ namespace Game.PatternCombat.Units.UnitInfoManager
         protected GameObject UnitObject;
         protected IUnitHealth UnitHealth;
         
-        public virtual void Initialize(UnitInfoInputData inputData)
+        public virtual void Initialize(UnitInfoProviderInitData inputData)
         {
             if (inputData is null)
                 throw new NullReferenceException(nameof(inputData));
@@ -28,9 +28,9 @@ namespace Game.PatternCombat.Units.UnitInfoManager
         public UnitHitPointsState GetUnitHitPointsState() => UnitHealth.HitPointsState;
     }
 
-    public class UnitInfoInputData
+    public class UnitInfoProviderInitData
     {
-        public UnitInfoInputData(UnitConfig unitConfig, GameObject unitObject, 
+        public UnitInfoProviderInitData(UnitConfig unitConfig, GameObject unitObject, 
             IUnitHealth unitHealth)
         {
             UnitConfig = unitConfig;
@@ -41,6 +41,5 @@ namespace Game.PatternCombat.Units.UnitInfoManager
         public UnitConfig UnitConfig;
         public GameObject UnitObject;
         public IUnitHealth UnitHealth;
-        public UnitHitPointsBehaviorData UnitHealthData;
     }
 }

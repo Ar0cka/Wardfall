@@ -33,7 +33,7 @@ namespace Game.PatternCombat.BattleUnitSystem
 
             var unitStates = new UnitCombatInfo(unitInfo, parent);
             
-            var unitObject = Instantiate(unitStates.UnitInfo.unitConfig.VisualData.unitModel);
+            var unitObject = Instantiate(unitStates.UnitWorldConfig.unitConfig.VisualData.unitModel);
 
             if (unitObject is null)
             {

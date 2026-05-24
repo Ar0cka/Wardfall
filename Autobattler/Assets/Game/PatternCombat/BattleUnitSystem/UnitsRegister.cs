@@ -15,7 +15,7 @@ namespace Game.PatternCombat.BattleUnitSystem
         public void AddUnit(UnitParent parent, BaseUnitController oldUnit)
         {
             var dictionary = parent == UnitParent.Player ? _playerUnits : _enemyUnits;
-            var unitInfo = oldUnit.GetUnitInfo().UnitInfo.unitConfig;
+            var unitInfo = oldUnit.GetUnitInfo().UnitWorldConfig.unitConfig;
 
             dictionary[unitInfo.UnitID] = oldUnit;
             

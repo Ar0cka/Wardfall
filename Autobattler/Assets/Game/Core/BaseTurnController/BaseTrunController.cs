@@ -41,8 +41,8 @@ namespace Game.Core.BaseTurnController
             
             var units = GetAllUnits();
 
-            units.Sort((a, b) => b.GetUnitInfo().UnitInfo.unitConfig.Stats.initiative
-                .CompareTo(a.GetUnitInfo().UnitInfo.unitConfig.Stats.initiative));
+            units.Sort((a, b) => b.GetUnitInfo().UnitWorldConfig.unitConfig.Stats.initiative
+                .CompareTo(a.GetUnitInfo().UnitWorldConfig.unitConfig.Stats.initiative));
             
             foreach (var unit in units)
             {
